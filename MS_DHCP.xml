@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2020-02-23T18:00:17Z</date>
+    <groups>
+        <group>
+            <name>all/servers/AD</name>
+        </group>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>MS DHCP</template>
+            <name>MS DHCP</name>
+            <groups>
+                <group>
+                    <name>all/servers/AD</name>
+                </group>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>DHCP Server</name>
+                </application>
+            </applications>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>DHCP Scopes</name>
+                    <key>DHCPv4LLD</key>
+                    <delay>1h</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>DHCP Scope {#SCOPEID} / {#SCOPENAME} - free IP address</name>
+                            <key>DHCPv4ScopeFree[{#SCOPEID}]</key>
+                            <history>30d</history>
+                            <applications>
+                                <application>
+                                    <name>DHCP Server</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>DHCP Scope {#SCOPEID} / {#SCOPENAME} - used IP address (percentage)</name>
+                            <key>DHCPv4ScopeInUsePercentage[{#SCOPEID}]</key>
+                            <history>30d</history>
+                            <value_type>FLOAT</value_type>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>DHCP Server</name>
+                                </application>
+                            </applications>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&gt;=90</expression>
+                                    <name>DHCP scope {#SCOPE} / {#SCOPENAME} is almost full.</name>
+                                    <priority>WARNING</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{last()}&gt;=95</expression>
+                                    <name>DHCP scope {#SCOPE} / {#SCOPENAME} is full.</name>
+                                    <priority>HIGH</priority>
+                                    <dependencies>
+                                        <dependency>
+                                            <name>DHCP scope {#SCOPE} / {#SCOPENAME} is almost full.</name>
+                                            <expression>{MS DHCP:DHCPv4ScopeInUsePercentage[{#SCOPEID}].last()}&gt;=90</expression>
+                                        </dependency>
+                                    </dependencies>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>DHCP Scope {#SCOPEID} / {#SCOPENAME} - used IP address</name>
+                            <key>DHCPv4ScopeInUse[{#SCOPEID}]</key>
+                            <history>30d</history>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>DHCP Server</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>DHCP Scope {#SCOPEID} / {#SCOPENAME} - pending IP address</name>
+                            <key>DHCPv4ScopePending[{#SCOPEID}]</key>
+                            <history>30d</history>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>DHCP Server</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>DHCP Scope {#SCOPEID} / {#SCOPENAME} - reserved IP address</name>
+                            <key>DHCPv4ScopeReserved[{#SCOPEID}]</key>
+                            <history>30d</history>
+                            <units>%</units>
+                            <applications>
+                                <application>
+                                    <name>DHCP Server</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                    </item_prototypes>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#SCOPEID}</lld_macro>
+                            <path>$.SCOPEID</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#SCOPENAME}</lld_macro>
+                            <path>$.SCOPENAME</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#SUBNETMASK}</lld_macro>
+                            <path>$.SUBNETMASK</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+</zabbix_export>
